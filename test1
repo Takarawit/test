@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ข้อมูลเกียรติบัตรทั้งหมด</title>
+</head>
+<body>
+    <h1>ข้อมูลเกียรติบัตรทั้งหมด</h1>
+    <p><a href="<?= homeUrl ?>">กลับไปหน้าบันทึกข้อมูล</a></p>
+    
+    <div id="loading">กำลังโหลดข้อมูล...</div>
+    <div id="data-container" style="display: none;">
+        <table border="1" cellpadding="5" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>ลำดับ</th>
+                    <th>วันที่บันทึก</th>
+                    <th>ประเภทผู้รับรางวัล</th>
+                    <th>ชื่อ-นามสกุล</th>
+                    <th>รางวัลระดับ</th>
+                    <th>ชื่อรางวัล</th>
+                    <th>จากงาน</th>
+                    <th>หน่วยงานที่รับรอง</th>
+                    <th>วันที่ได้รับ</th>
+                    <th>ภาพกิจกรรม</th>
+                    <th>ใบประกาศ</th>
+                    <th>รูปกิจกรรม</th>
+                </tr>
+            </thead>
+            <tbody id="data-body">
+                <!-- ข้อมูลจะถูกเพิ่มที่นี่ด้วย JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // เรียกข้อมูลจาก Google Sheets
+        google.script.run.withSuccessHandler(displayData).getAllData();
+        
+        // แสดงข้อมูลในตาราง
+        function displayData(dataArray) {
+            // ซ่อนข้อความกำลังโหลด
+            document.getElementById('loading').style.display = 'none';
+            
+            // แสดงตาราง
+            document.getElementById('data-container').style.display = 'block';
+            
+            const tbody = document.getElementById('data-body');
+            
+            // ตรวจสอบว่ามีข้อมูลหรือไม่
+            if (dataArray.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = '<td colspan="12" style="text-align: center;">ไม่พบข้อมูล</td>';
+                tbody.appendChild(row);
+                return;
+            }
+            
+            // สร้างแถวข้อมูล
+            dataArray.forEach((rowData, index) => {
+                const row = document.createElement('tr');
+                
+                // เพิ่มคอลัมน์ลำดับ
+                let html = `<td>${index + 1}</td>`;
+                
+                // วันที่บันทึก (คอลัมน์ที่ 0)
+                html += `<td>${rowData[0]}</td>`;
+                
+                // ประเภทผู้รับรางวัล (คอลัมน์ที่ 1)
+                html += `<td>${rowData[1]}</td>`;
+                
+                // ชื่อ-นามสกุล (คอลัมน์ที่ 2)
+                html += `<td>${rowData[2]}</td>`;
+                
+                // รางวัลระดับ (คอลัมน์ที่ 3)
+                html += `<td>${rowData[3]}</td>`;
+                
+                // ชื่อรางวัล (คอลัมน์ที่ 4)
+                html += `<td>${rowData[4]}</td>`;
+                
+                // จากงาน (คอลัมน์ที่ 5)
+                html += `<td>${rowData[5]}</td>`;
+                
+                // หน่วยงานที่รับรอง (คอลัมน์ที่ 6)
+                html += `<td>${rowData[6]}</td>`;
+                
+                // วันที่ได้รับ (คอลัมน์ที่ 7)
+                html += `<td>${rowData[7]}</td>`;
+                
+                // ลิงก์ภาพกิจกรรม (คอลัมน์ที่ 8)
+                html += `<td><a href="${rowData[8]}" target="_blank">ดูภาพ</a></td>`;
+                
+                // ลิงก์ใบประกาศ (คอลัมน์ที่ 9)
+                html += `<td><a href="${rowData[9]}" target="_blank">ดูใบประกาศ</a></td>`;
+                
+                // ลิงก์รูปกิจกรรม (คอลัมน์ที่ 10)
+                html += `<td><a href="${rowData[10]}" target="_blank">ดูรูปกิจกรรม</a></td>`;
+                
+                row.innerHTML = html;
+                tbody.appendChild(row);
+            });
+        }
+    </script>
+</body>
+</html>
